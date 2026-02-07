@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-troly-red: #E11D48;
+  --color-troly-blue: #2563EB;
+  --font-sans: 'Inter', sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-white font-sans antialiased;
+  }
+}
