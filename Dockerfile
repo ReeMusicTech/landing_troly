@@ -1,4 +1,4 @@
-# USAMOS NODE 20 (Compatible con Vite 7)
+# USAMOS NODE 20
 FROM node:20-alpine
 
 # CARPETA DE TRABAJO
@@ -13,14 +13,14 @@ RUN npm install
 # COPIAMOS EL CÓDIGO
 COPY . .
 
-# CONSTRUIMOS LA APP (Crea la carpeta dist)
+# CONSTRUIMOS LA APP
 RUN npm run build
 
-# INSTALAMOS UN SERVIDOR LIGERO
+# INSTALAMOS SERVE
 RUN npm install -g serve
 
-# EXPONEMOS EL PUERTO 3000
-EXPOSE 3000
+# EXPONEMOS EL PUERTO 80 (Cambio clave aquí)
+EXPOSE 80
 
-# COMANDO DE ARRANQUE: Sirve la carpeta 'dist' como SPA
-CMD ["serve", "-s", "dist", "-l", "3000"]
+# COMANDO DE ARRANQUE: Sirve en puerto 80 (Cambio clave aquí)
+CMD ["serve", "-s", "dist", "-l", "80"]
