@@ -1,13 +1,14 @@
 # Configuración de despliegue para Troly
 
-# 1. Definimos el entorno (Node 22 para Vite 7)
+# 1. Entorno: Solo pedimos Node 22 (npm ya viene dentro)
 [phases.setup]
-nixPkgs = ["nodejs_22", "npm"]
+nixPkgs = ["nodejs_22"]
 
-# 2. Definimos cómo se construye
+# 2. Construcción: Instalamos y creamos la build
 [phases.build]
 cmds = ["npm install", "npm run build"]
 
-# 3. ¡LA CLAVE! Le decimos explícitamente que sirva la carpeta 'dist'
+# 3. CRÍTICO: Esto arregla la pantalla blanca
+# Le dice al servidor que ignore el código fuente y sirva solo la app final
 [static]
 root = "dist"
