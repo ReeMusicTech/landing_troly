@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: './', // <--- ESTA ES LA LÍNEA MÁGICA QUE SOLUCIONA LA PANTALLA BLANCA
+  base: './',  // <--- ¡ESTA ES LA CLAVE QUE FALTA! 🔑
 })
