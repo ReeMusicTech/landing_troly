@@ -43,7 +43,7 @@ function App() {
     // Asumiendo que 'formData' es el objeto con tus respuestas
     // Asegúrate que las llaves del objeto coincidan con las columnas del Excel (menos 'fecha')
 
-    const WEBHOOK_URL = "PEGA_AQUI_LA_URL_DE_APPS_SCRIPT";
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyiYS7J4WOF6712dgJ7Gh-GVXTH-E_pe2OaAFOsvvjpySOPIt96toU01_mMuBaiXmp6SA/exec";
 
     try {
       await fetch(WEBHOOK_URL, {
