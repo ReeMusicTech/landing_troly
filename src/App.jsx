@@ -18,6 +18,7 @@ function App() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,8 +41,13 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Asumiendo que 'formData' es el objeto con tus respuestas
-    // Asegúrate que las llaves del objeto coincidan con las columnas del Excel (menos 'fecha')
+
+    // Prevenir envíos duplicados
+    if (isSubmitting) return;
+
+    // Activar estado de carga
+    setIsSubmitting(true);
+
     // EL CHISMOSO 🕵️‍♂️
     console.log("Lo que voy a enviar:", formData);
 
@@ -57,10 +63,31 @@ function App() {
         body: JSON.stringify(formData),
       });
 
+      // ✅ ÉXITO: Limpiar el formulario y resetear a valores iniciales
+      setFormData({
+        collectionMethod: '',
+        missingPiecesMethod: '',
+        duplicateBuyError: '',
+        showingImportance: 3,
+        listingFrustrations: '',
+        othersPlatform: '',
+        priceCheckSources: [],
+        lastTransactionDifficulty: '',
+        priceKnowledgeInfluence: '',
+        noAppsScenario: '',
+        idealAppFeature: '',
+        contactInfo: ''
+      });
+
       alert("¡Gracias por unirte al club Troly!");
-      // Aquí podrías redirigir o limpiar el formulario
+
     } catch (error) {
-      console.error("Error!", error.message);
+      // ❌ ERROR: Mostrar mensaje y permitir reintentar
+      console.error("Error al enviar el formulario:", error.message);
+      alert("Hubo un error al enviar el formulario. Por favor, intenta nuevamente.");
+    } finally {
+      // Siempre desactivar el estado de carga
+      setIsSubmitting(false);
     }
   };
 
@@ -344,10 +371,16 @@ function App() {
 
               <button
                 type="submit"
-                className="w-full group relative flex items-center justify-center gap-2 bg-gradient-to-r from-troly-red to-rose-600 hover:from-rose-600 hover:to-troly-red text-white font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-[1.02] shadow-lg shadow-rose-900/20"
+                disabled={isSubmitting}
+                className={`w-full group relative flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl transition-all shadow-lg ${isSubmitting
+                    ? 'bg-slate-700 text-slate-400 cursor-not-allowed opacity-60'
+                    : 'bg-gradient-to-r from-troly-red to-rose-600 hover:from-rose-600 hover:to-troly-red text-white transform hover:scale-[1.02] shadow-rose-900/20'
+                  }`}
               >
-                <span>Enviar y Unirme al Club</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <span>{isSubmitting ? 'Enviando...' : 'Enviar y Unirme al Club'}</span>
+                {!isSubmitting && (
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                )}
               </button>
 
             </form>
