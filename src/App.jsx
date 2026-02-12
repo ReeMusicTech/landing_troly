@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { ArrowRight, Check, Car, Users, DollarSign, Lightbulb, ChevronRight } from 'lucide-react';
+import { t, getCurrentLanguage } from './i18n';
+import LanguageSelector from './components/LanguageSelector';
 
 function App() {
+  const [language, setLanguage] = useState(getCurrentLanguage());
   const [formData, setFormData] = useState({
     collectionMethod: '',
     missingPiecesMethod: '',
@@ -79,12 +82,12 @@ function App() {
         contactInfo: ''
       });
 
-      alert("¡Gracias por unirte al club Troly!");
+      alert(t('alert.success'));
 
     } catch (error) {
       // ❌ ERROR: Mostrar mensaje y permitir reintentar
       console.error("Error al enviar el formulario:", error.message);
-      alert("Hubo un error al enviar el formulario. Por favor, intenta nuevamente.");
+      alert(t('alert.error'));
     } finally {
       // Siempre desactivar el estado de carga
       setIsSubmitting(false);
@@ -98,9 +101,9 @@ function App() {
           <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
             <Check className="w-8 h-8 text-green-500" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">¡Bienvenido al Club!</h2>
+          <h2 className="text-2xl font-bold text-white mb-2">{t('success.title')}</h2>
           <p className="text-slate-400">
-            Gracias por ser parte de Troly. Estamos construyendo algo increíble para ti.
+            {t('success.message')}
           </p>
         </div>
       </div>
@@ -111,10 +114,11 @@ function App() {
     <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-troly-red selection:text-white">
       {/* Header */}
       <header className="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
-        <div className="max-w-lg mx-auto px-6 py-4 flex justify-center">
+        <div className="max-w-lg mx-auto px-6 py-4 flex justify-between items-center">
           <span className="text-2xl font-bold italic tracking-tighter text-white">
             TROLY
           </span>
+          <LanguageSelector onLanguageChange={setLanguage} />
         </div>
       </header>
 
@@ -127,13 +131,13 @@ function App() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-troly-red opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-troly-red"></span>
               </span>
-              Early Access
+              {t('hero.badge')}
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
-              Construyendo la comunidad de coleccionistas más grande de América
+              {t('hero.title')}
             </h1>
             <p className="text-slate-400 text-lg">
-              Construyámosla juntos. Ayúdanos a diseñar la herramienta perfecta para tu colección.
+              {t('hero.subtitle')}
             </p>
           </div>
 
@@ -147,12 +151,12 @@ function App() {
               <section className="space-y-6">
                 <div className="flex items-center gap-3 text-troly-red mb-4">
                   <Car className="w-6 h-6" />
-                  <h2 className="text-xl font-semibold text-white">Tu Colección</h2>
+                  <h2 className="text-xl font-semibold text-white">{t('section.collection')}</h2>
                 </div>
 
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-slate-300">
-                    ¿Cómo llevas actualmente el registro de los carritos que tienes?
+                    {t('form.collectionMethod.label')}
                   </label>
                   <select
                     name="collectionMethod"
@@ -160,33 +164,33 @@ function App() {
                     onChange={handleInputChange}
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-troly-red focus:ring-1 focus:ring-troly-red appearance-none"
                   >
-                    <option value="" disabled>Selecciona una opción</option>
-                    <option value="Memoria">🧠 Memoria</option>
-                    <option value="Excel">📊 Excel / Google Sheets</option>
-                    <option value="Fotos">📸 Fotos en el celular</option>
-                    <option value="Notas">📝 Notas</option>
-                    <option value="App">📱 App genérica</option>
-                    <option value="Ninguno">❌ No llevo registro</option>
+                    <option value="" disabled>{t('form.collectionMethod.placeholder')}</option>
+                    <option value="Memoria">{t('option.memory')}</option>
+                    <option value="Excel">{t('option.excel')}</option>
+                    <option value="Fotos">{t('option.photos')}</option>
+                    <option value="Notas">{t('option.notes')}</option>
+                    <option value="App">{t('option.app')}</option>
+                    <option value="Ninguno">{t('option.none')}</option>
                   </select>
                 </div>
 
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-slate-300">
-                    ¿Qué usas para ver qué piezas te faltan durante una cacería?
+                    {t('form.missingPieces.label')}
                   </label>
                   <textarea
                     name="missingPiecesMethod"
                     value={formData.missingPiecesMethod}
                     onChange={handleInputChange}
                     rows={2}
-                    placeholder="Ej. Reviso mi galería de fotos..."
+                    placeholder={t('form.missingPieces.placeholder')}
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-troly-red focus:ring-1 focus:ring-troly-red text-base"
                   />
                 </div>
 
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-slate-300">
-                    ¿Cuándo fue la última vez que compraste un repetido por error? ¿Qué pasó?
+                    {t('form.duplicateError.label')}
                   </label>
                   <textarea
                     name="duplicateBuyError"
@@ -204,12 +208,12 @@ function App() {
               <section className="space-y-6">
                 <div className="flex items-center gap-3 text-blue-500 mb-4">
                   <Users className="w-6 h-6" />
-                  <h2 className="text-xl font-semibold text-white">Comunidad</h2>
+                  <h2 className="text-xl font-semibold text-white">{t('section.community')}</h2>
                 </div>
 
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-slate-300">
-                    ¿Qué tan importante es para ti mostrar tus piezas? (1-5)
+                    {t('form.showingImportance.label')}
                   </label>
                   <div className="flex justify-between gap-2">
                     {[1, 2, 3, 4, 5].map((num) => (
@@ -227,14 +231,14 @@ function App() {
                     ))}
                   </div>
                   <div className="flex justify-between text-xs text-slate-500 px-1">
-                    <span>No me interesa</span>
-                    <span>Fundamental</span>
+                    <span>{t('form.showingImportance.min')}</span>
+                    <span>{t('form.showingImportance.max')}</span>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-slate-300">
-                    ¿Qué te frustra de las redes actuales al compartir tu colección?
+                    {t('form.listingFrustrations.label')}
                   </label>
                   <textarea
                     name="listingFrustrations"
@@ -247,7 +251,7 @@ function App() {
 
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-slate-300">
-                    ¿Conoces coleccionistas que compartan fotos constantemente? ¿Dónde?
+                    {t('form.othersPlatform.label')}
                   </label>
                   <textarea
                     name="othersPlatform"
@@ -265,15 +269,15 @@ function App() {
               <section className="space-y-6">
                 <div className="flex items-center gap-3 text-green-500 mb-4">
                   <DollarSign className="w-6 h-6" />
-                  <h2 className="text-xl font-semibold text-white">Mercado</h2>
+                  <h2 className="text-xl font-semibold text-white">{t('section.market')}</h2>
                 </div>
 
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-slate-300">
-                    ¿Cómo verificas si un precio es justo?
+                    {t('form.priceCheck.label')}
                   </label>
                   <div className="grid grid-cols-2 gap-3">
-                    {['eBay', 'Grupos FB', 'Vendedor', 'Experiencia', 'Otro'].map((source) => (
+                    {['ebay', 'facebook', 'seller', 'experience', 'other'].map((source) => (
                       <button
                         key={source}
                         type="button"
@@ -283,7 +287,7 @@ function App() {
                           : 'bg-slate-800 border border-slate-700 text-slate-400 hover:border-slate-600'
                           }`}
                       >
-                        {source}
+                        {t(`price.${source}`)}
                         {formData.priceCheckSources.includes(source) && <Check className="w-4 h-4" />}
                       </button>
                     ))}
@@ -292,7 +296,7 @@ function App() {
 
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-slate-300">
-                    ¿Qué fue lo más difícil de tu última compra o venta?
+                    {t('form.transactionDifficulty.label')}
                   </label>
                   <textarea
                     name="lastTransactionDifficulty"
@@ -305,7 +309,7 @@ function App() {
 
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-slate-300">
-                    ¿Cómo influye el desconocimiento del precio en tu decisión?
+                    {t('form.priceKnowledge.label')}
                   </label>
                   <textarea
                     name="priceKnowledgeInfluence"
@@ -323,12 +327,12 @@ function App() {
               <section className="space-y-6">
                 <div className="flex items-center gap-3 text-purple-500 mb-4">
                   <Lightbulb className="w-6 h-6" />
-                  <h2 className="text-xl font-semibold text-white">El Ideal</h2>
+                  <h2 className="text-xl font-semibold text-white">{t('section.ideal')}</h2>
                 </div>
 
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-slate-300">
-                    Si desaparecieran las apps actuales, ¿qué harías?
+                    {t('form.noApps.label')}
                   </label>
                   <textarea
                     name="noAppsScenario"
@@ -341,7 +345,7 @@ function App() {
 
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-slate-300">
-                    ¿Qué función NO podría faltar en tu app ideal? <span className="text-red-500">*</span>
+                    {t('form.idealFeature.label')} <span className="text-red-500">{t('form.idealFeature.required')}</span>
                   </label>
                   <textarea
                     name="idealAppFeature"
@@ -349,21 +353,21 @@ function App() {
                     value={formData.idealAppFeature}
                     onChange={handleInputChange}
                     rows={3}
-                    placeholder="Esta es la pregunta más importante..."
+                    placeholder={t('form.idealFeature.placeholder')}
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-base"
                   />
                 </div>
 
                 <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-800">
                   <label className="block text-sm font-medium text-slate-300 mb-3">
-                    ¿Te interesaría una entrevista de 10 min? (Deja tu contacto)
+                    {t('form.contactInfo.label')}
                   </label>
                   <input
                     type="text"
                     name="contactInfo"
                     value={formData.contactInfo}
                     onChange={handleInputChange}
-                    placeholder="Correo o @Instagram"
+                    placeholder={t('form.contactInfo.placeholder')}
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-base"
                   />
                 </div>
@@ -373,11 +377,11 @@ function App() {
                 type="submit"
                 disabled={isSubmitting}
                 className={`w-full group relative flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl transition-all shadow-lg ${isSubmitting
-                    ? 'bg-slate-700 text-slate-400 cursor-not-allowed opacity-60'
-                    : 'bg-gradient-to-r from-troly-red to-rose-600 hover:from-rose-600 hover:to-troly-red text-white transform hover:scale-[1.02] shadow-rose-900/20'
+                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed opacity-60'
+                  : 'bg-gradient-to-r from-troly-red to-rose-600 hover:from-rose-600 hover:to-troly-red text-white transform hover:scale-[1.02] shadow-rose-900/20'
                   }`}
               >
-                <span>{isSubmitting ? 'Enviando...' : 'Enviar y Unirme al Club'}</span>
+                <span>{isSubmitting ? t('button.submitting') : t('button.submit')}</span>
                 {!isSubmitting && (
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 )}
@@ -387,7 +391,7 @@ function App() {
           </div>
 
           <footer className="mt-12 text-center text-slate-600 text-sm">
-            <p>&copy; {new Date().getFullYear()} Troly. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Troly. {t('footer.rights')}</p>
           </footer>
         </div>
       </main>

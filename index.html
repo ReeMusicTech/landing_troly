@@ -1,5 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
+<script>
+  // Set HTML lang attribute from localStorage before React loads (SEO + Accessibility)
+  (function () {
+    const storedLang = localStorage.getItem('troly_lang');
+    if (storedLang) {
+      document.documentElement.lang = storedLang;
+    } else {
+      const browserLang = (navigator.language || navigator.userLanguage).split('-')[0].toLowerCase();
+      document.documentElement.lang = browserLang === 'pt' ? 'pt' : browserLang === 'en' ? 'en' : 'es';
+    }
+  })();
+</script>
 
 <head>
   <!-- Google tag (gtag.js) -->
