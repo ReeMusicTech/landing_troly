@@ -11,7 +11,7 @@ const translations = {
 
         // Form
         'form.question': '¿Qué quieres hacer hoy?',
-        'form.instruction': 'Marca una o varias opciones',
+        'form.instruction': 'Marca una o varias opciones, o no estoy interesado',
 
         // Chips
         'chip.search': 'Buscar una pieza',
@@ -31,6 +31,7 @@ const translations = {
         // Submit button
         'button.submit': 'Enviar',
         'button.submitting': 'Enviando...',
+        'button.notInterested': 'No estoy interesado',
 
         // Footer
         'footer.invite': 'El acceso será por invitación',
@@ -53,7 +54,7 @@ const translations = {
 
         // Form
         'form.question': 'What do you want to do today?',
-        'form.instruction': 'Select one or more options',
+        'form.instruction': 'Select one or more options, or I\'m not interested',
 
         // Chips
         'chip.search': 'Find a piece',
@@ -73,6 +74,7 @@ const translations = {
         // Submit button
         'button.submit': 'Submit',
         'button.submitting': 'Submitting...',
+        'button.notInterested': "I'm not interested",
 
         // Footer
         'footer.invite': 'Access will be by invitation only',
@@ -95,7 +97,7 @@ const translations = {
 
         // Form
         'form.question': 'O que você quer fazer hoje?',
-        'form.instruction': 'Marque uma ou várias opções',
+        'form.instruction': 'Marque uma ou várias opções, ou não estou interessado',
 
         // Chips
         'chip.search': 'Encontrar uma peça',
@@ -115,6 +117,7 @@ const translations = {
         // Submit button
         'button.submit': 'Enviar',
         'button.submitting': 'Enviando...',
+        'button.notInterested': 'Não estou interessado',
 
         // Footer
         'footer.invite': 'O acesso será por convite',

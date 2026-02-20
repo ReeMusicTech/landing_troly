@@ -58,6 +58,26 @@ function App() {
     }
   };
 
+  const handleNotInterested = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    const payload = { not_interested: 1, search: 0, sell: 0, price: 0, meet: 0, events: 0, digitize: 0, trade: 0, raffle: 0 };
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting:', error);
+      alert(t('alert.error'));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   /* ── Success Screen ── */
   if (submitted) {
     return (
@@ -238,6 +258,35 @@ function App() {
                 onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
               >
                 {isSubmitting ? t('button.submitting') : `${t('button.submit')} ➔`}
+              </button>
+
+              {/* Not Interested button */}
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={handleNotInterested}
+                style={{
+                  width: '100%', padding: '0.75rem',
+                  marginTop: '0.6rem',
+                  borderRadius: '0.85rem',
+                  border: '1px solid #2a4a3e',
+                  background: 'transparent',
+                  fontFamily: 'inherit', fontSize: '0.88rem', fontWeight: 500,
+                  color: '#4d7a6e',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.18s ease',
+                  opacity: isSubmitting ? 0.5 : 1,
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.color = '#7a9990';
+                  e.currentTarget.style.borderColor = '#3d5e56';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.color = '#4d7a6e';
+                  e.currentTarget.style.borderColor = '#2a4a3e';
+                }}
+              >
+                {t('button.notInterested')}
               </button>
 
               {/* Invite note inside card */}
