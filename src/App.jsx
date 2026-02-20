@@ -1,398 +1,266 @@
 import React, { useState } from 'react';
-import { ArrowRight, Check, Car, Users, DollarSign, Lightbulb, ChevronRight } from 'lucide-react';
 import { t, getCurrentLanguage } from './i18n';
 import LanguageSelector from './components/LanguageSelector';
 
-function App() {
-  const [language, setLanguage] = useState(getCurrentLanguage());
-  const [formData, setFormData] = useState({
-    collectionMethod: '',
-    missingPiecesMethod: '',
-    duplicateBuyError: '',
-    showingImportance: 3,
-    listingFrustrations: '',
-    othersPlatform: '',
-    priceCheckSources: [],
-    lastTransactionDifficulty: '',
-    priceKnowledgeInfluence: '',
-    noAppsScenario: '',
-    idealAppFeature: '',
-    contactInfo: ''
-  });
+// Chip definitions: key, i18n key, category
+const CHIPS = [
+  { key: 'search', label: 'chip.search', cat: 'cat.market' },
+  { key: 'sell', label: 'chip.sell', cat: 'cat.market' },
+  { key: 'price', label: 'chip.price', cat: 'cat.market' },
+  { key: 'meet', label: 'chip.meet', cat: 'cat.community' },
+  { key: 'events', label: 'chip.events', cat: 'cat.community' },
+  { key: 'digitize', label: 'chip.digitize', cat: 'cat.collection' },
+  { key: 'trade', label: 'chip.trade', cat: 'cat.market' },
+  { key: 'raffle', label: 'chip.raffle', cat: 'cat.market' },
+];
 
+const INITIAL_CHIPS = {
+  search: false, sell: false, price: false, meet: false,
+  events: false, digitize: false, trade: false, raffle: false
+};
+
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyiYS7J4WOF6712dgJ7Gh-GVXTH-E_pe2OaAFOsvvjpySOPIt96toU01_mMuBaiXmp6SA/exec";
+
+function App() {
+  const [, setLanguage] = useState(getCurrentLanguage());
+  const [chips, setChips] = useState(INITIAL_CHIPS);
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleCheckboxChange = (value) => {
-    setFormData(prev => {
-      const current = prev.priceCheckSources;
-      if (current.includes(value)) {
-        return { ...prev, priceCheckSources: current.filter(item => item !== value) };
-      } else {
-        return { ...prev, priceCheckSources: [...current, value] };
-      }
-    });
+  const toggleChip = (key) => {
+    setChips(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Prevenir envíos duplicados
     if (isSubmitting) return;
-
-    // Activar estado de carga
     setIsSubmitting(true);
 
-    // EL CHISMOSO 🕵️‍♂️
-    console.log("Lo que voy a enviar:", formData);
-
-    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyiYS7J4WOF6712dgJ7Gh-GVXTH-E_pe2OaAFOsvvjpySOPIt96toU01_mMuBaiXmp6SA/exec";
+    // Convert booleans to 1/0 integers for Google Sheets
+    const payload = Object.fromEntries(
+      Object.entries(chips).map(([k, v]) => [k, v ? 1 : 0])
+    );
 
     try {
       await fetch(WEBHOOK_URL, {
-        method: "POST",
-        mode: "no-cors", // Importante para evitar errores de CORS con Google
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
-
-      // ✅ ÉXITO: Limpiar el formulario y resetear a valores iniciales
-      setFormData({
-        collectionMethod: '',
-        missingPiecesMethod: '',
-        duplicateBuyError: '',
-        showingImportance: 3,
-        listingFrustrations: '',
-        othersPlatform: '',
-        priceCheckSources: [],
-        lastTransactionDifficulty: '',
-        priceKnowledgeInfluence: '',
-        noAppsScenario: '',
-        idealAppFeature: '',
-        contactInfo: ''
-      });
-
-      alert(t('alert.success'));
-
+      setChips(INITIAL_CHIPS);
+      setSubmitted(true);
     } catch (error) {
-      // ❌ ERROR: Mostrar mensaje y permitir reintentar
-      console.error("Error al enviar el formulario:", error.message);
+      console.error('Error submitting:', error);
       alert(t('alert.error'));
     } finally {
-      // Siempre desactivar el estado de carga
       setIsSubmitting(false);
     }
   };
 
+  /* ── Success Screen ── */
   if (submitted) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl">
-          <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Check className="w-8 h-8 text-green-500" />
+      <div style={{ minHeight: '100vh', background: '#0D0D0D', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+        <div className="fade-in" style={{
+          background: '#111111', border: '1px solid #1A2E28', borderRadius: '1.5rem',
+          padding: '2.5rem 2rem', maxWidth: '450px', width: '100%', textAlign: 'center'
+        }}>
+          {/* Neon check circle */}
+          <div style={{
+            width: '72px', height: '72px', borderRadius: '50%',
+            background: 'rgba(69, 230, 194, 0.1)', border: '2px solid #45E6C2',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 1.5rem',
+            boxShadow: '0 0 24px rgba(69, 230, 194, 0.3)'
+          }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#45E6C2" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">{t('success.title')}</h2>
-          <p className="text-slate-400">
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', marginBottom: '0.75rem' }}>
+            {t('success.title')}
+          </h2>
+          <p style={{ color: '#7a9990', lineHeight: 1.6, marginBottom: '2rem' }}>
             {t('success.message')}
+          </p>
+          <p style={{ fontSize: '0.78rem', color: '#3d5e56', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            {t('success.footer')}
           </p>
         </div>
       </div>
     );
   }
 
+  /* ── Main Form ── */
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-troly-red selection:text-white">
-      {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
-        <div className="max-w-lg mx-auto px-6 py-4 flex justify-between items-center">
-          <span className="text-2xl font-bold italic tracking-tighter text-white">
+    <div style={{ minHeight: '100vh', background: '#0D0D0D', color: '#e2e8f0' }}>
+
+      {/* ── Header ── */}
+      <header style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
+        background: 'rgba(13,13,13,0.85)', backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(69,230,194,0.08)',
+      }}>
+        <div style={{
+          maxWidth: '450px', margin: '0 auto',
+          padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+        }}>
+          <span style={{ fontSize: '1.5rem', fontWeight: 800, fontStyle: 'italic', letterSpacing: '-0.04em', color: '#fff' }}>
             TROLY
           </span>
           <LanguageSelector onLanguageChange={setLanguage} />
         </div>
       </header>
 
-      <main className="pt-24 pb-12 px-4">
-        <div className="max-w-lg mx-auto">
-          {/* Hero Section */}
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-medium text-troly-red mb-4">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-troly-red opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-troly-red"></span>
-              </span>
+      {/* ── Main ── */}
+      <main style={{ paddingTop: '5.5rem', paddingBottom: '3rem', padding: '5.5rem 1rem 3rem' }}>
+        <div style={{ maxWidth: '450px', margin: '0 auto' }} className="fade-in">
+
+          {/* ── Hero ── */}
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            {/* Badge pill */}
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+              background: 'rgba(26,46,40,0.8)', border: '1px solid rgba(69,230,194,0.2)',
+              borderRadius: '999px', padding: '0.3rem 0.85rem',
+              fontSize: '0.72rem', fontWeight: 600, color: '#45E6C2',
+              letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '1.25rem'
+            }}>
+              <span style={{
+                width: '7px', height: '7px', borderRadius: '50%',
+                background: '#45E6C2', display: 'inline-block',
+                boxShadow: '0 0 6px #45E6C2'
+              }} className="pulse-dot" />
               {t('hero.badge')}
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
+
+            <h1 style={{
+              fontSize: 'clamp(1.6rem, 5vw, 2.1rem)', fontWeight: 800,
+              color: '#ffffff', lineHeight: 1.25, marginBottom: '1rem',
+              letterSpacing: '-0.02em'
+            }}>
               {t('hero.title')}
             </h1>
-            <p className="text-slate-400 text-lg">
+
+            <p style={{ color: '#7a9990', fontSize: '1.15rem', lineHeight: 1.65 }}>
               {t('hero.subtitle')}
             </p>
           </div>
 
-          {/* Form Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-            <div className="h-1 w-full bg-gradient-to-r from-troly-red to-blue-600"></div>
+          {/* ── Form Card ── */}
+          <div style={{
+            background: '#111111', border: '1px solid #1A2E28',
+            borderRadius: '1.5rem', overflow: 'hidden',
+            boxShadow: '0 24px 64px rgba(0,0,0,0.6)'
+          }}>
+            {/* Neon top accent bar */}
+            <div style={{
+              height: '2px', width: '100%',
+              background: 'linear-gradient(90deg, #45E6C2, #2ba88d, transparent)'
+            }} />
 
-            <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-10">
+            <form onSubmit={handleSubmit} style={{ padding: '1.75rem 1.5rem' }}>
 
-              {/* Section 1 */}
-              <section className="space-y-6">
-                <div className="flex items-center gap-3 text-troly-red mb-4">
-                  <Car className="w-6 h-6" />
-                  <h2 className="text-xl font-semibold text-white">{t('section.collection')}</h2>
-                </div>
+              {/* Question */}
+              <div style={{ marginBottom: '1.25rem' }}>
+                <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ffffff', marginBottom: '0.4rem' }}>
+                  {t('form.question')}
+                </p>
+                <p style={{ fontSize: '0.95rem', color: '#4d7a6e', letterSpacing: '0.01em' }}>
+                  {t('form.instruction')}
+                </p>
+              </div>
 
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-slate-300">
-                    {t('form.collectionMethod.label')}
-                  </label>
-                  <select
-                    name="collectionMethod"
-                    value={formData.collectionMethod}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-troly-red focus:ring-1 focus:ring-troly-red appearance-none"
-                  >
-                    <option value="" disabled>{t('form.collectionMethod.placeholder')}</option>
-                    <option value="Memoria">{t('option.memory')}</option>
-                    <option value="Excel">{t('option.excel')}</option>
-                    <option value="Fotos">{t('option.photos')}</option>
-                    <option value="Notas">{t('option.notes')}</option>
-                    <option value="App">{t('option.app')}</option>
-                    <option value="Ninguno">{t('option.none')}</option>
-                  </select>
-                </div>
+              {/* Chip Grid */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.75rem' }}>
+                {CHIPS.map(({ key, label, cat }) => {
+                  const isActive = chips[key];
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => toggleChip(key)}
+                      style={{
+                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '0.85rem 1rem',
+                        borderRadius: '0.75rem',
+                        outline: 'none',
+                        cursor: 'pointer',
+                        fontFamily: 'inherit',
+                        fontSize: '0.92rem',
+                        fontWeight: isActive ? 600 : 500,
+                        textAlign: 'left',
+                        // Dynamic styles
+                        background: isActive ? '#45E6C2' : '#1A2E28',
+                        border: `1px solid ${isActive ? '#45E6C2' : '#2a4a3e'}`,
+                        color: isActive ? '#0A1F1B' : '#9db4ae',
+                        boxShadow: isActive ? '0 0 18px rgba(69, 230, 194, 0.3), 0 2px 8px rgba(0,0,0,0.4)' : 'none',
+                        transform: isActive ? 'scale(1.01)' : 'scale(1)',
+                        transition: 'all 0.18s ease',
+                      }}
+                    >
+                      <span>{t(label)}</span>
+                      {/* Category badge */}
+                      <span style={{
+                        fontSize: '0.68rem', fontWeight: 600,
+                        color: isActive ? 'rgba(10,31,27,0.7)' : '#3d5e56',
+                        letterSpacing: '0.04em', textTransform: 'uppercase',
+                        flexShrink: 0, marginLeft: '0.5rem'
+                      }}>
+                        {t(cat)}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
 
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-slate-300">
-                    {t('form.missingPieces.label')}
-                  </label>
-                  <textarea
-                    name="missingPiecesMethod"
-                    value={formData.missingPiecesMethod}
-                    onChange={handleInputChange}
-                    rows={2}
-                    placeholder={t('form.missingPieces.placeholder')}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-troly-red focus:ring-1 focus:ring-troly-red text-base"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-slate-300">
-                    {t('form.duplicateError.label')}
-                  </label>
-                  <textarea
-                    name="duplicateBuyError"
-                    value={formData.duplicateBuyError}
-                    onChange={handleInputChange}
-                    rows={2}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-troly-red focus:ring-1 focus:ring-troly-red text-base"
-                  />
-                </div>
-              </section>
-
-              <hr className="border-slate-800" />
-
-              {/* Section 2 */}
-              <section className="space-y-6">
-                <div className="flex items-center gap-3 text-blue-500 mb-4">
-                  <Users className="w-6 h-6" />
-                  <h2 className="text-xl font-semibold text-white">{t('section.community')}</h2>
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-slate-300">
-                    {t('form.showingImportance.label')}
-                  </label>
-                  <div className="flex justify-between gap-2">
-                    {[1, 2, 3, 4, 5].map((num) => (
-                      <button
-                        key={num}
-                        type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, showingImportance: num }))}
-                        className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${formData.showingImportance === num
-                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
-                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
-                          }`}
-                      >
-                        {num}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex justify-between text-xs text-slate-500 px-1">
-                    <span>{t('form.showingImportance.min')}</span>
-                    <span>{t('form.showingImportance.max')}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-slate-300">
-                    {t('form.listingFrustrations.label')}
-                  </label>
-                  <textarea
-                    name="listingFrustrations"
-                    value={formData.listingFrustrations}
-                    onChange={handleInputChange}
-                    rows={3}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-base"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-slate-300">
-                    {t('form.othersPlatform.label')}
-                  </label>
-                  <textarea
-                    name="othersPlatform"
-                    value={formData.othersPlatform}
-                    onChange={handleInputChange}
-                    rows={2}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-base"
-                  />
-                </div>
-              </section>
-
-              <hr className="border-slate-800" />
-
-              {/* Section 3 */}
-              <section className="space-y-6">
-                <div className="flex items-center gap-3 text-green-500 mb-4">
-                  <DollarSign className="w-6 h-6" />
-                  <h2 className="text-xl font-semibold text-white">{t('section.market')}</h2>
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-slate-300">
-                    {t('form.priceCheck.label')}
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {['ebay', 'facebook', 'seller', 'experience', 'other'].map((source) => (
-                      <button
-                        key={source}
-                        type="button"
-                        onClick={() => handleCheckboxChange(source)}
-                        className={`py-3 px-4 rounded-lg text-sm text-left transition-all flex items-center justify-between ${formData.priceCheckSources.includes(source)
-                          ? 'bg-green-500/10 border border-green-500 text-green-400'
-                          : 'bg-slate-800 border border-slate-700 text-slate-400 hover:border-slate-600'
-                          }`}
-                      >
-                        {t(`price.${source}`)}
-                        {formData.priceCheckSources.includes(source) && <Check className="w-4 h-4" />}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-slate-300">
-                    {t('form.transactionDifficulty.label')}
-                  </label>
-                  <textarea
-                    name="lastTransactionDifficulty"
-                    value={formData.lastTransactionDifficulty}
-                    onChange={handleInputChange}
-                    rows={3}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-base"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-slate-300">
-                    {t('form.priceKnowledge.label')}
-                  </label>
-                  <textarea
-                    name="priceKnowledgeInfluence"
-                    value={formData.priceKnowledgeInfluence}
-                    onChange={handleInputChange}
-                    rows={2}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-base"
-                  />
-                </div>
-              </section>
-
-              <hr className="border-slate-800" />
-
-              {/* Section 4 */}
-              <section className="space-y-6">
-                <div className="flex items-center gap-3 text-purple-500 mb-4">
-                  <Lightbulb className="w-6 h-6" />
-                  <h2 className="text-xl font-semibold text-white">{t('section.ideal')}</h2>
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-slate-300">
-                    {t('form.noApps.label')}
-                  </label>
-                  <textarea
-                    name="noAppsScenario"
-                    value={formData.noAppsScenario}
-                    onChange={handleInputChange}
-                    rows={2}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-base"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-slate-300">
-                    {t('form.idealFeature.label')} <span className="text-red-500">{t('form.idealFeature.required')}</span>
-                  </label>
-                  <textarea
-                    name="idealAppFeature"
-                    required
-                    value={formData.idealAppFeature}
-                    onChange={handleInputChange}
-                    rows={3}
-                    placeholder={t('form.idealFeature.placeholder')}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-base"
-                  />
-                </div>
-
-                <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-800">
-                  <label className="block text-sm font-medium text-slate-300 mb-3">
-                    {t('form.contactInfo.label')}
-                  </label>
-                  <input
-                    type="text"
-                    name="contactInfo"
-                    value={formData.contactInfo}
-                    onChange={handleInputChange}
-                    placeholder={t('form.contactInfo.placeholder')}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-base"
-                  />
-                </div>
-              </section>
-
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full group relative flex items-center justify-center gap-2 font-bold py-4 px-8 rounded-xl transition-all shadow-lg ${isSubmitting
-                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed opacity-60'
-                  : 'bg-gradient-to-r from-troly-red to-rose-600 hover:from-rose-600 hover:to-troly-red text-white transform hover:scale-[1.02] shadow-rose-900/20'
-                  }`}
+                style={{
+                  width: '100%', padding: '0.9rem',
+                  borderRadius: '0.85rem', border: 'none',
+                  fontFamily: 'inherit', fontSize: '1rem', fontWeight: 700,
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  letterSpacing: '0.02em',
+                  background: isSubmitting
+                    ? '#1A2E28'
+                    : 'linear-gradient(135deg, #45E6C2 0%, #2ec4a6 100%)',
+                  color: isSubmitting ? '#4d7a6e' : '#0A1F1B',
+                  boxShadow: isSubmitting ? 'none' : '0 0 24px rgba(69,230,194,0.4), 0 4px 12px rgba(0,0,0,0.5)',
+                  transform: isSubmitting ? 'scale(1)' : undefined,
+                  transition: 'all 0.2s ease',
+                  opacity: isSubmitting ? 0.6 : 1,
+                }}
+                onMouseEnter={e => { if (!isSubmitting) e.currentTarget.style.transform = 'scale(1.02)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
               >
-                <span>{isSubmitting ? t('button.submitting') : t('button.submit')}</span>
-                {!isSubmitting && (
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                )}
+                {isSubmitting ? t('button.submitting') : `${t('button.submit')} ➔`}
               </button>
+
+              {/* Invite note inside card */}
+              <p style={{
+                textAlign: 'center', marginTop: '1rem',
+                fontSize: '0.85rem', color: '#ffffff',
+                fontWeight: 500,
+              }}>
+                {t('footer.invite')}
+              </p>
 
             </form>
           </div>
 
-          <footer className="mt-12 text-center text-slate-600 text-sm">
-            <p>&copy; {new Date().getFullYear()} Troly. {t('footer.rights')}</p>
-          </footer>
+          {/* ── Copyright outside card ── */}
+          <p style={{
+            textAlign: 'center', marginTop: '1.5rem',
+            fontSize: '0.78rem', color: '#45E6C2',
+            letterSpacing: '0.04em',
+          }}>
+            © 2026 Troly. All rights reserved.
+          </p>
+
         </div>
       </main>
     </div>

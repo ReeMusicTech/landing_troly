@@ -1,13 +1,84 @@
 @import "tailwindcss";
 
 @theme {
-  --color-troly-red: #E11D48;
-  --color-troly-blue: #2563EB;
+  --color-troly-neon: #45E6C2;
+  --color-troly-dark-input: #1A2E28;
+  --color-troly-bg: #0D0D0D;
+  --color-troly-card: #111111;
   --font-sans: 'Inter', sans-serif;
 }
 
 @layer base {
+  * {
+    box-sizing: border-box;
+  }
+
   body {
-    @apply bg-slate-950 text-white font-sans antialiased;
+    background-color: #0D0D0D;
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  .chip-base {
+    background-color: #1A2E28;
+    border: 1px solid #2a4a3e;
+    color: #9db4ae;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .chip-active {
+    background-color: #45E6C2;
+    border-color: #45E6C2;
+    color: #0D0D0D;
+    box-shadow: 0 0 16px rgba(69, 230, 194, 0.35);
+  }
+
+  .neon-glow {
+    box-shadow: 0 0 24px rgba(69, 230, 194, 0.4), 0 4px 16px rgba(0, 0, 0, 0.6);
+  }
+
+  .neon-border {
+    border-color: #45E6C2;
+    box-shadow: 0 0 8px rgba(69, 230, 194, 0.2);
+  }
+
+  .pulse-dot {
+    animation: pulse-neon 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-neon {
+
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 0.5;
+      transform: scale(1.4);
+    }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.4s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
