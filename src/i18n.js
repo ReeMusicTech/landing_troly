@@ -44,6 +44,7 @@ const translations = {
         'success.title': '¡Gracias por tu aporte!',
         'success.message': 'Usaremos tus respuestas para construir la herramienta perfecta para coleccionistas.',
         'success.footer': 'El acceso será por invitación',
+        'success.who': '¿Quién está detrás de esta iniciativa? Aquí puedes ver su colección →',
     },
 
     en: {
@@ -87,6 +88,7 @@ const translations = {
         'success.title': 'Thank you for contributing!',
         'success.message': "We'll use your answers to build the perfect tool for collectors.",
         'success.footer': 'Access will be by invitation only',
+        'success.who': 'Who is behind this initiative? See their collection here →',
     },
 
     pt: {
@@ -130,6 +132,7 @@ const translations = {
         'success.title': 'Obrigado pela sua contribuição!',
         'success.message': 'Usaremos suas respostas para construir a ferramenta perfeita para colecionadores.',
         'success.footer': 'O acesso será por convite',
+        'success.who': 'Quem está por trás desta iniciativa? Veja sua coleção aqui →',
     }
 };
 

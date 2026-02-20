@@ -107,6 +107,19 @@ function App() {
           <p style={{ fontSize: '0.78rem', color: '#3d5e56', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
             {t('success.footer')}
           </p>
+          <p style={{ marginTop: '1.5rem', fontSize: '0.88rem', color: '#7a9990', lineHeight: 1.6 }}>
+            {t('success.who')}{' '}
+            <a
+              href="https://troly.autos"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#45E6C2', fontWeight: 600, textDecoration: 'none' }}
+              onMouseEnter={e => { e.currentTarget.style.textDecoration = 'underline'; }}
+              onMouseLeave={e => { e.currentTarget.style.textDecoration = 'none'; }}
+            >
+              troly.autos
+            </a>
+          </p>
         </div>
       </div>
     );
